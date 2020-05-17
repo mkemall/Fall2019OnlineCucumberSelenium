@@ -1,14 +1,14 @@
 package com.vytrack.pages;
 
-import com.automation.utilities.BrowserUtils;
-import com.automation.utilities.ConfigurationReader;
-import com.automation.utilities.Driver;
+import com.vytrack.utilities.BrowserUtilities;
+import com.vytrack.utilities.ConfigurationReader;
+import com.vytrack.utilities.Driver;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class LoginPage {
+public class LoginPage extends AbstractPageBase {
 
     @FindBy(id = "prependedInput")
     private WebElement username;
@@ -26,13 +26,6 @@ public class LoginPage {
     @FindBy(css = "[class='alert alert-error']")
     private WebElement warningMessage;
 
-    public LoginPage() {
-        //to connect our webdriver, page class and page factory
-        //PageFactory - used to use @FindBy annotations
-        //PageFactory - helps to find elements easier
-        PageFactory.initElements(Driver.getDriver(), this);
-    }
-
     public String getWarningMessageText() {
         return warningMessage.getText();
     }
@@ -47,8 +40,8 @@ public class LoginPage {
     public void login(String usernameValue, String passwordValue) {
         username.sendKeys(usernameValue);
         password.sendKeys(passwordValue, Keys.ENTER);
-        BrowserUtils.waitForPageToLoad(10);
-        BrowserUtils.wait(3);
+        BrowserUtilities.waitForPageToLoad(10);
+        BrowserUtilities.wait(3);
     }
 
     /**
@@ -59,7 +52,27 @@ public class LoginPage {
     public void login() {
         username.sendKeys(ConfigurationReader.getProperty("store_manager"));
         password.sendKeys(ConfigurationReader.getProperty("password"), Keys.ENTER);
-        BrowserUtils.waitForPageToLoad(10);
-        BrowserUtils.wait(3);
+        BrowserUtilities.waitForPageToLoad(10);
+        BrowserUtilities.wait(3);
+    }
+    /**
+     * this method stands for login based on user type
+     * For example: if parameter is equals to driver, user will login as a driver
+     * If role parameter is not correct, method will throw exception
+     * @param role - driver, sales manager or store manager
+     */
+    public void login(String role){
+        String userName = "";
+        if (role.equalsIgnoreCase("driver")){
+            userName = "user15";
+        }else if (role.equalsIgnoreCase("sales manager")){
+            userName = "salesmanager110";
+        }else if (role.equalsIgnoreCase("store manager")){
+            userName = "storemanager85";
+        }else {
+            throw new RuntimeException("Invalid role!");
+        }
+        System.out.println("Login as "+role);
+        login(userName, "UserUser123");
     }
 }
